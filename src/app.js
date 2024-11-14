@@ -1,3 +1,4 @@
+import "./app.css"
 import * as THREE from "three"
 import gsap from "gsap"
 
@@ -46,8 +47,8 @@ const box3 = new THREE.Mesh(
 )
 
 box1.position.set(0, 0, 0);
-box2.position.set(-2, 0, 0);
-box3.position.set(2, 0, 0);
+box2.position.set(-3, 0, 0);
+box3.position.set(3, 0, 0);
 // box1.scale.set(1, 1.5, 1);
 // box1.rotation.set(0, 0, 2);
 // box1.quaternion.set(0, 0, 0)
@@ -68,7 +69,7 @@ const sizes = {
 }
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
-camera.position.set(0, 0, 3)
+camera.position.set(0, 0, 5)
 // camera.lookAt(mesh.position)
 scene.add(camera)
 
@@ -86,9 +87,22 @@ renderer.setSize(sizes.width, sizes.height)
 // Animations
 //
 
-gsap.to(box1.position, {duration: 1, delay: 1, x: 2})
+gsap.to(box2.position, {duration: 1, delay: 1, x: -1})
+gsap.to(box3.position, {duration: 1, delay: 1, x: 1})
+
+let clock = new THREE.Clock()
+let currentTime = Date.now()
 
 const tick = () => {
+  const elapsedTime = clock.getElapsedTime()
+  // const deltaTime = clock.getDelta() // mostly 0s
+  const deltaTime = Date.now() - currentTime
+  currentTime = Date.now()
+
+  console.log("Elapsed: " + elapsedTime + " Delta: " + deltaTime)
+
+  group.rotation.y = elapsedTime
+
   // render
   renderer.render(scene, camera)
   window.requestAnimationFrame(tick)

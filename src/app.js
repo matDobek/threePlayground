@@ -65,9 +65,40 @@ group.scale.set(1, 1.5, 1)
 //
 
 const sizes = {
-  width: 800,
-  height: 600
+  width: window.innerWidth,
+  height: window.innerHeight
 }
+
+window.addEventListener("resize", () => {
+  // update sizes
+  sizes.width = window.innerWidth
+  sizes.height = window.innerHeight
+
+  // update camera
+  camera.aspect = sizes.width / sizes.height
+  camera.updateProjectionMatrix()
+
+  // update renderer
+  renderer.setSize(sizes.width, sizes.height)
+})
+
+window.addEventListener("dblclick", () => {
+
+  if (document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement) {
+    (document.exitFullscreen ||
+      document.webkitExitFullscreen ||
+      document.mozCancelFullScreen ||
+      document.msExitFullscreen).call(document);
+  } else {
+    (canvas.requestFullscreen ||
+      canvas.webkitRequestFullscreen ||
+      canvas.mozRequestFullscreen ||
+      canvas.msRequestFullscreen).call(canvas);
+  }
+})
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
 camera.position.set(0, 0, 10)
@@ -83,6 +114,10 @@ const renderer = new THREE.WebGLRenderer({
 })
 
 renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(
+  Math.min(window.devicePixelRatio, 2)
+)
+console.log(window.devicePixelRatio)
 
 //
 // CURSOR

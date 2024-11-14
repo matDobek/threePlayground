@@ -1,5 +1,6 @@
 import "./app.css"
 import * as THREE from "three"
+import { OrbitControls } from "three/addons/controls/OrbitControls.js"
 import gsap from "gsap"
 
 //
@@ -69,7 +70,7 @@ const sizes = {
 }
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
-camera.position.set(0, 0, 5)
+camera.position.set(0, 0, 10)
 // camera.lookAt(mesh.position)
 scene.add(camera)
 
@@ -82,6 +83,37 @@ const renderer = new THREE.WebGLRenderer({
 })
 
 renderer.setSize(sizes.width, sizes.height)
+
+//
+// CURSOR
+//
+
+// const cursor = { x: 0, y: 0 }
+// let mouseDown = false
+//
+// window.addEventListener("mousedown", (_event) => {
+//   mouseDown = true
+// })
+//
+// window.addEventListener("mouseup", (_event) => {
+//   mouseDown = false
+// })
+//
+// window.addEventListener("mousemove", (event) => {
+//   if(mouseDown) {
+//     cursor.x = event.clientX / sizes.width - 0.5
+//     cursor.y = event.clientY / sizes.height - 0.5
+//
+//     cursor.x /= Math.abs(cursor.x)
+//     cursor.y /= Math.abs(cursor.y) * (-1) // invert
+//   } else {
+//     cursor.x = 0
+//     cursor.y = 0
+//   }
+// })
+//
+
+const controls = new OrbitControls(camera, canvas)
 
 //
 // Animations
@@ -99,11 +131,20 @@ const tick = () => {
   const deltaTime = Date.now() - currentTime
   currentTime = Date.now()
 
-  console.log("Elapsed: " + elapsedTime + " Delta: " + deltaTime)
+  // console.log("Elapsed: " + elapsedTime + " Delta: " + deltaTime)
 
   group.rotation.y = elapsedTime
 
+
+  //
+  // camera
+  //
+  // camera.position.x += cursor.x * 0.1
+  // camera.position.y += cursor.y * 0.1
+
+  //
   // render
+  //
   renderer.render(scene, camera)
   window.requestAnimationFrame(tick)
 }

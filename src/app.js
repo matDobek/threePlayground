@@ -32,14 +32,35 @@ scene.add(axisHelper)
 const group = new THREE.Group()
 scene.add(group)
 
-const box1 = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ color: 0xff0000 })
-)
+// const geometry = new THREE.BoxGeometry(1, 2, 1, 3, 3, 2)
+const geometry = new THREE.BufferGeometry()
+
+const positionArray = new Float32Array([
+  0, 0, 0,
+  0, 1, 0,
+  1, 0, 0,
+
+  0, 0, 0,
+  0, -1, 0,
+  -1, 0, 0,
+])
+const positionAttribute = new THREE.BufferAttribute(positionArray, 3)
+geometry.setAttribute('position', positionAttribute)
+
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true })
+const box1 = new THREE.Mesh(geometry, material)
+
+const geometry2 = new THREE.BufferGeometry()
+const positionArray2 = new Float32Array(100 * 3 * 3)
+for(let i = 0; i < positionArray2.length; i++) {
+  positionArray2[i] = ( Math.random() - 0.5 ) * 2
+}
+const positionAttribute2 = new THREE.BufferAttribute(positionArray2, 3)
+geometry2.setAttribute('position', positionAttribute2)
 
 const box2 = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+  geometry2,
+  new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true })
 )
 
 const box3 = new THREE.Mesh(
@@ -48,8 +69,8 @@ const box3 = new THREE.Mesh(
 )
 
 box1.position.set(0, 0, 0);
-box2.position.set(-3, 0, 0);
-box3.position.set(3, 0, 0);
+box2.position.set(-5, 0, 0);
+box3.position.set(5, 0, 0);
 // box1.scale.set(1, 1.5, 1);
 // box1.rotation.set(0, 0, 2);
 // box1.quaternion.set(0, 0, 0)
@@ -58,7 +79,7 @@ group.add(box1)
 group.add(box2)
 group.add(box3)
 
-group.scale.set(1, 1.5, 1)
+// group.scale.set(1, 1.5, 1)
 
 //
 // CAMERA
@@ -154,8 +175,8 @@ const controls = new OrbitControls(camera, canvas)
 // Animations
 //
 
-gsap.to(box2.position, {duration: 1, delay: 1, x: -1})
-gsap.to(box3.position, {duration: 1, delay: 1, x: 1})
+gsap.to(box2.position, {duration: 1, delay: 1, x: -3})
+gsap.to(box3.position, {duration: 1, delay: 1, x: 3})
 
 let clock = new THREE.Clock()
 let currentTime = Date.now()
@@ -166,10 +187,10 @@ const tick = () => {
   const deltaTime = Date.now() - currentTime
   currentTime = Date.now()
 
-  // console.log("Elapsed: " + elapsedTime + " Delta: " + deltaTime)
-
-  group.rotation.y = elapsedTime
-
+  //
+  // animation
+  //
+  // group.rotation.y = elapsedTime
 
   //
   // camera

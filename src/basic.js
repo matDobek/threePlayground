@@ -8,7 +8,7 @@ import GUI from "lil-gui"
 // DEBUG
 //
 const gui = new GUI({
-  widht: 300,
+  width: 300,
   title: "Debug UI",
   closeFolders: false
 })

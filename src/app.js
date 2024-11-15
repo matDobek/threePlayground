@@ -2,6 +2,25 @@ import "./app.css"
 import * as THREE from "three"
 import { OrbitControls } from "three/addons/controls/OrbitControls.js"
 import gsap from "gsap"
+import GUI from "lil-gui"
+
+//
+// DEBUG
+//
+const gui = new GUI({
+  widht: 300,
+  title: "Debug UI",
+  closeFolders: false
+})
+
+gui.hide()
+window.addEventListener("keydown", (event) => {
+  if(event.key == 'h') {
+    gui.show(gui._hidden)
+  }
+})
+
+const debugObject = {}
 
 //
 // CANVAS
@@ -57,15 +76,14 @@ for(let i = 0; i < positionArray2.length; i++) {
 }
 const positionAttribute2 = new THREE.BufferAttribute(positionArray2, 3)
 geometry2.setAttribute('position', positionAttribute2)
+const material2 = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true })
+const box2 = new THREE.Mesh(geometry2, material2)
 
-const box2 = new THREE.Mesh(
-  geometry2,
-  new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true })
-)
-
+debugObject.color = 0x0000ff
+const material3 = new THREE.MeshBasicMaterial({ color: debugObject.color, wireframe: true })
 const box3 = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ color: 0x0000ff })
+  material3
 )
 
 box1.position.set(0, 0, 0);
@@ -78,6 +96,45 @@ box3.position.set(5, 0, 0);
 group.add(box1)
 group.add(box2)
 group.add(box3)
+
+const groupFolder = gui.addFolder("group")
+
+groupFolder.add(group.position, "x").min(-3).max(3).step(0.01).name("group.x")
+groupFolder.add(group.position, "y").min(-3).max(3).step(0.01)
+groupFolder.add(group.position, "z").min(-3).max(3).step(0.01)
+groupFolder.add(group, "visible")
+
+gui.add(material3, "wireframe")
+gui
+  .addColor(material3, "color")
+  .onChange((value) => {
+    console.log(value.getHexString())
+  })
+
+gui
+  .addColor(debugObject, "color")
+  .onChange((value) => {
+    material3.color.set(value)
+  })
+
+debugObject.spin = () => {
+  gsap.to(box3.rotation, { y: box3.rotation.y + Math.PI*2, duration: 3 })
+}
+gui.add(debugObject, "spin")
+
+debugObject.subdivision = 1
+gui
+  .add(debugObject, "subdivision")
+  .min(1)
+  .max(20)
+  .step(1)
+  .onFinishChange(() => {
+    box3.geometry.dispose()
+    box3.geometry = new THREE.BoxGeometry(
+      1, 1, 1,
+      debugObject.subdivision, debugObject.subdivision, debugObject.subdivision
+    )
+  })
 
 // group.scale.set(1, 1.5, 1)
 

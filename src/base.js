@@ -15,13 +15,6 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 //
-// HELPERS
-//
-
-const axisHelper = new THREE.AxesHelper()
-scene.add(axisHelper)
-
-//
 // OBJECTS
 //
 

@@ -1,4 +1,4 @@
-import "./app.css"
+import "../app.css"
 import * as THREE from "three"
 import { OrbitControls } from "three/addons/controls/OrbitControls.js"
 import GUI from "lil-gui"
@@ -171,7 +171,7 @@ scene.add(sphere, plane, torus)
 // ENVIRONMENT
 //
 const rgbeLoader = new RGBELoader()
-rgbeLoader.load("../public/textures/environmentMap/2k.hdr", (envMap) => {
+rgbeLoader.load("../../public/textures/environmentMap/2k.hdr", (envMap) => {
   envMap.mapping = THREE.EquirectangularReflectionMapping
 
   scene.background = envMap

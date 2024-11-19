@@ -1,6 +1,7 @@
 import "../app.css"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import GUI from "lil-gui"
 
 //===================
@@ -89,7 +90,7 @@ const sphere = new THREE.Mesh(
 scene.add(sphere)
 
 //
-// ------ custom str ------
+// ------ pyramid start ------
 //
 
 const geometry = new THREE.BufferGeometry()
@@ -118,16 +119,24 @@ geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3))
 geometry.setIndex(indices)
 geometry.computeVertexNormals() // compute normals for lighting
 
-const obj = new THREE.Mesh(
+const pyramid = new THREE.Mesh(
   geometry,
   new THREE.MeshStandardMaterial({color: 0xffffff, wireframe: false})
 )
-scene.add(obj)
+pyramid.position.set(-2.5, 0, 2.5)
+scene.add(pyramid)
 
-obj.castShadow = true
+pyramid.castShadow = true
+
+const pyramidGUI = gui.addFolder("pyramid")
+pyramidGUI.add(pyramid.position, "x").min(-5).max(5)
+pyramidGUI.add(pyramid.position, "z").min(-5).max(5)
+
+const pyramidNormalHelper = new VertexNormalsHelper( pyramid, 1, 0xff0000 );
+scene.add( pyramidNormalHelper );
 
 //
-// ------ custom end ------
+// ------ pyramid end ------
 //
 
 plane.receiveShadow = true
@@ -144,11 +153,9 @@ sphere.position.set(1.5, 0, 1.5)
 
 const objs = [box1, box2, box3, sphere]
 objs.map((o) => {
-    o.geometry.translate(0, 10, 0)
+    o.geometry.translate(0, 0, 0) // changing geometry position will affect "center"
+    o.rotation.z = - Math.PI / 4
 })
-// sphere.geometry.translate(0, 1, 0)
-
-// box.rotation.z = - Math.PI / 4
 
 // spotLight.target.position.add(box.position)
 
@@ -157,21 +164,55 @@ const boundingBox1 = new THREE.BoxHelper(box1, 0xff0000)
 scene.add(boundingBox1)
 
 box2.geometry.computeBoundingBox()
+const bbMin = box2.geometry.boundingBox.min
+const bbMax = box2.geometry.boundingBox.max
+const boundingBoxGeometry = new THREE.BufferGeometry()
+const bbVertices = new Float32Array([
+  // bottom square
+  bbMin.x, bbMin.y, bbMax.z, // 0 bottom left
+  bbMax.x, bbMin.y, bbMax.z, // 1 botoom right
+  bbMax.x, bbMin.y, bbMin.z, // 2 top right
+  bbMin.x, bbMin.y, bbMin.z, // 3 top left
+
+  // top square
+  bbMin.x, bbMax.y, bbMax.z, // 4 bottom left
+  bbMax.x, bbMax.y, bbMax.z, // 5 botoom right
+  bbMax.x, bbMax.y, bbMin.z, // 6 top right
+  bbMin.x, bbMax.y, bbMin.z, // 7 top left
+])
+const bbIndices = [
+  // bottom
+  3, 2, 1,
+  0, 3, 1,
+
+  // top
+  4, 5, 7,
+  5, 6, 7,
+
+  // front
+  0, 1, 5,
+  0, 5, 4,
+
+  // back
+  7, 6, 3,
+  3, 6, 2,
+
+  // right
+  1, 2, 5,
+  2, 6, 5,
+
+  // left
+  4, 7, 3,
+  4, 3, 0,
+]
+boundingBoxGeometry.setAttribute("position", new THREE.BufferAttribute(bbVertices, 3))
+boundingBoxGeometry.setIndex(bbIndices)
 const boundingBox2 = new THREE.Mesh(
-  new THREE.BoxGeometry(
-    box2.geometry.boundingBox.max.x - box2.geometry.boundingBox.min.x,
-    box2.geometry.boundingBox.max.y - box2.geometry.boundingBox.min.y,
-    box2.geometry.boundingBox.max.z - box2.geometry.boundingBox.min.z
-  ),
+  boundingBoxGeometry,
   new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true})
 )
-
 boundingBox2.position.copy(box2.position)
-boundingBox2.position.add(box2.geometry.boundingBox.min)
-boundingBox2.position.add(box2.geometry.boundingBox.max)
-console.log(box2.position)
-console.log(box2.geometry)
-console.log(box2.geometry.boundingBox)
+boundingBox2.rotation.copy(box2.rotation)
 scene.add(boundingBox2)
 
 box3.geometry.computeBoundingSphere()
@@ -193,10 +234,9 @@ scene.add(boundingSphere)
 // boundingSphere.visible = false
 const boundingGUI = gui.addFolder("Bounding")
 boundingGUI.add(boundingBox1, "visible").name("box 1")
-// boundingGUI.add(boundingBox2, "visible").name("box 2")
+boundingGUI.add(boundingBox2, "visible").name("box 2")
 boundingGUI.add(boundingBox3, "visible").name("box 3")
 boundingGUI.add(boundingSphere, "visible").name("sphere")
-
 
 //===================
 // Camera

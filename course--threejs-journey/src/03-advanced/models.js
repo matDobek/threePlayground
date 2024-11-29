@@ -137,6 +137,14 @@ gltfLoader.load("../../public/models/Fox/glTF/Fox.gltf",
   },
 )
 
+gltfLoader.load("../../public/models/Burger/burger.gltf",
+  (gltf) => {
+    gltf.scene.scale.setScalar(0.5)
+    gltf.scene.position.z = 7
+    scene.add(gltf.scene)
+  }
+)
+
 // ========================================
 // RENDERER
 // ========================================

@@ -3,7 +3,7 @@ import { useThree } from "@react-three/fiber"
 import { useRef } from "react"
 import { Vector3 } from "three"
 
-export default function Experience() {
+export default function DreiExperience() {
   const {camera} = useThree()
   camera.position.set(5, 5, 7)
   camera.lookAt(new Vector3(0, 0, 0))

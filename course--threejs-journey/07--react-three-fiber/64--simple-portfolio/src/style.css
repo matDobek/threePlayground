@@ -1,0 +1,46 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  overflow: hidden;
+}
+
+
+html, body, #root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: ivory;
+}
+
+.r3f {
+  touch-action: none;
+}
+
+.htmlScreen iframe {
+  width: 1000px;
+  height: 1000px;
+  border: none;
+  border-radius: 50px;;
+}
+
+.htmlFloor {
+  /* color: #232323; */
+  color: plum;
+  opacity: 0.3;
+  user-select: none;
+  font-family: Arial, Helvetica, sans-serif;
+
+  .tag {
+    font-size: 2em;
+  }
+
+  .text {
+    font-size: 5em;
+    padding-left: 1em;
+  }
+}
